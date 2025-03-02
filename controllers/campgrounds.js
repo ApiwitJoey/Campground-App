@@ -1,6 +1,6 @@
 const { json } = require('express');
 const Hospital = require('../models/Hospital');
-const { param } = require('../routes/hospitals');
+const { param } = require('../routes/campgrounds');
 const Appointment = require('../models/Appointment');
 //@desc Get all hospitals
 //@route GET /api/v1/hospitals

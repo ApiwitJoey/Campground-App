@@ -2,8 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cookieparser = require('cookie-parser');
 const connectDB = require('./config/db');
-const hospitals = require('./routes/hospitals');
-const appointment = require('./routes/appointment');
+const campgrounds = require('./routes/campgrounds');
+const reserves = require('./routes/reserves');
 const auth = require('./routes/auth');
 const cookieParser = require('cookie-parser');
 
@@ -16,8 +16,8 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/api/v1/hospitals',hospitals);
-app.use('/api/v1/appointments',appointment);
+app.use('/api/v1/campgrounds',campgrounds);
+app.use('/api/v1/reserves',reserves);
 app.use('/api/v1/auth',auth);
 app.use(cookieparser());
 
