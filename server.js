@@ -10,6 +10,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require('helmet');
 const {xss} = require('express-xss-sanitizer');
 const ratelimit = require('express-rate-limit');
+const hpp = require('hpp');
 
 
 const limiter = ratelimit({
@@ -29,6 +30,7 @@ app.use(mongoSanitize());
 app.use(helmet()); 
 app.use(xss());
 app.use(limiter);
+app.use(hpp());
 
 app.use('/api/v1/campgrounds',campgrounds);
 app.use('/api/v1/reserves',reserves);
