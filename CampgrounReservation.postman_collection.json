@@ -20,7 +20,7 @@
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
 									"\r",
-									"pm.execution.setNextRequest(\"login\");"
+									"pm.execution.setNextRequest(\"userLogin\");"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -42,7 +42,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\" : \"UserJoe\",\r\n    \"email\" : \"UsrJoe1@gmail.com\",\r\n    \"role\" : \"user\",\r\n    \"password\" : \"12345678\",\r\n    \"telephone\" : \"099-9999999\"\r\n}",
+							"raw": "{\r\n    \"name\" : \"{{$randomUserName}}\",\r\n    \"email\" : \"{{$randomEmail}}\",\r\n    \"role\" : \"user\",\r\n    \"password\" : \"12345678\",\r\n    \"telephone\" : \"099-9999999\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -67,7 +67,64 @@
 					"response": []
 				},
 				{
-					"name": "login",
+					"name": "registerAdmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest(\"login\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"{{$randomUserName}}\",\r\n    \"email\" : \"{{$randomEmail}}\",\r\n    \"role\" : \"admin\",\r\n    \"password\" : \"12345678\",\r\n    \"telephone\" : \"099-9999999\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userLogin",
 					"event": [
 						{
 							"listen": "test",
@@ -79,7 +136,73 @@
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
 									"\r",
-									"pm.execution.setNextRequest(\"getLoggedInUserWithToken\");"
+									"pm.execution.setNextRequest(\"getLoggedInUserWithToken(usr)\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"UsrJoe1@gmail.com\",\r\n    \"password\" : \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "adminLogin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\",pm.response.json().token)\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest(\"getLoggedInUserWithToken(adm)\");"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -133,7 +256,7 @@
 					"response": []
 				},
 				{
-					"name": "getLoggedInUserWithToken",
+					"name": "getLoggedInUserWithToken(usr)",
 					"event": [
 						{
 							"listen": "test",
@@ -193,7 +316,117 @@
 					"response": []
 				},
 				{
-					"name": "logout",
+					"name": "getLoggedInUserWithToken(adm)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest(\"getAllResv(adm)\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjRkMWVlMGE3YjU2N2M1ZmZiNDFiOCIsImlhdCI6MTczOTkwNTgzMCwiZXhwIjoxNzQyNDk3ODMwfQ.k12dY48EOe9IqqWRH8Pi5eZQPY6-Zi392DLI_cUp8Yk",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/auth/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userLogout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"TOKEN\",null);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest(\"adminLogin\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "adminLogout",
 					"event": [
 						{
 							"listen": "test",
@@ -241,6 +474,65 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "showLogs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest(null);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/logs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"logs"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -266,7 +558,7 @@
 									"    pm.expect(response.count).to.be.above(0);\r",
 									"});\r",
 									"\r",
-									"pm.execution.setNextRequest(\"createNewCampground\");"
+									"pm.execution.setNextRequest(\"addResv\");"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -590,6 +882,61 @@
 					"response": []
 				},
 				{
+					"name": "getAllResv(adm)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"console.log(response);\r",
+									"\r",
+									"pm.test(\"There are some reserve!\", () => {\r",
+									"    pm.expect(response.count).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest(\"addResv(adm)\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/reserves",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"reserves"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "getResvForCampground",
 					"event": [
 						{
@@ -621,7 +968,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/v1/campgrounds/:campground_id/reserves",
+							"raw": "http://localhost:5000/api/v1/campgrounds/67c062ecdb4e60b5fafa237a/reserves",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -631,14 +978,8 @@
 								"api",
 								"v1",
 								"campgrounds",
-								":campground_id",
+								"67c062ecdb4e60b5fafa237a",
 								"reserves"
-							],
-							"variable": [
-								{
-									"key": "campground_id",
-									"value": "{{global_campground_ID}}"
-								}
 							]
 						}
 					},
@@ -660,7 +1001,142 @@
 									"\r",
 									"pm.globals.set(\"global_reserve_ID\", new_reserve_id);\r",
 									"\r",
+									"pm.execution.setNextRequest(\"addBadResv\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rDate\" : \"{{$randomDateFuture}}\",\r\n    \"user\" : \"67c1daf3c09d8a689593cf29\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/campgrounds/67c062ecdb4e60b5fafa237a/reserves",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"campgrounds",
+								"67c062ecdb4e60b5fafa237a",
+								"reserves"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addBadResv",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 500\", function(){\r",
+									"    pm.response.to.have.status(500);\r",
+									"});\r",
+									"\r",
 									"pm.execution.setNextRequest(\"getOneResv\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rDate\" : \"{{$randomDateFuture}}\",\r\n    \"user\" : \"67c1daf3c09d8a689593cf29\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/campgrounds/1/reserves",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"campgrounds",
+								"1",
+								"reserves"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addResv(adm)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const new_reserve_id = response.data._id;\r",
+									"\r",
+									"pm.globals.set(\"global_reserve_ID\", new_reserve_id);\r",
+									"\r",
+									"pm.execution.setNextRequest(\"updateResv(adm)\");"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -697,7 +1173,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/v1/campgrounds/:campground_id/reserves",
+							"raw": "http://localhost:5000/api/v1/campgrounds/67c062ecdb4e60b5fafa237a/reserves",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -707,14 +1183,8 @@
 								"api",
 								"v1",
 								"campgrounds",
-								":campground_id",
+								"67c062ecdb4e60b5fafa237a",
 								"reserves"
-							],
-							"variable": [
-								{
-									"key": "campground_id",
-									"value": "{{global_campground_ID}}"
-								}
 							]
 						}
 					},
@@ -814,6 +1284,76 @@
 						],
 						"body": {
 							"mode": "raw",
+							"raw": "{\r\n    \"rDate\" : \"{{$randomDateFuture}}\",\r\n    \"user\": \"67c1daf3c09d8a689593cf29\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/v1/reserves/:reserve_id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"reserves",
+								":reserve_id"
+							],
+							"variable": [
+								{
+									"key": "reserve_id",
+									"value": "{{global_reserve_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateResv(adm)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest(\"deleteResv(adm)\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": "JSON Type",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
 							"raw": "{\r\n    \"rDate\" : \"{{$randomDateFuture}}\",\r\n    \"user\": \"67c069e6c0af8ba0a408cc6b\"\r\n}",
 							"options": {
 								"raw": {
@@ -855,7 +1395,61 @@
 									"    pm.response.to.have.status(200);\r",
 									"});\r",
 									"\r",
-									"pm.execution.setNextRequest(\"deleteOneCampground\");"
+									"pm.execution.setNextRequest(\"userLogout\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/v1/reserves/:reserve_id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"v1",
+								"reserves",
+								":reserve_id"
+							],
+							"variable": [
+								{
+									"key": "reserve_id",
+									"value": "{{global_reserve_ID}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteResv(adm)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.execution.setNextRequest(\"showLogs\");"
 								],
 								"type": "text/javascript",
 								"packages": {}
