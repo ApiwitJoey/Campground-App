@@ -20,6 +20,11 @@ const CampgroundSchema = new Schema({
   telephone: {
     type: String,
     required: true
+  },
+  picture: {
+    type: String,  // this will hold the image URL or path
+    required: false, // set to true if image is mandatory
+    trim: true
   }
 }, {
   toJSON : {virtuals:true},

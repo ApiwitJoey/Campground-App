@@ -148,14 +148,14 @@ exports.deleteReserve = async (req,res,next) => {
             return res.status(401).json({success:false,message:`User ${req.user.id} is not authorized to delete this reserve`});
         }
 
-        await reserve.deleteOne();  
-
         // Log reservation deletion
         await Log.create({
             action: 'DELETE',
             user: req.user.id,
             reserve: req.params.id
         });
+
+        await reserve.deleteOne();  
 
         res.status(200).json({success:true,data:{}});
     } catch (error) {
