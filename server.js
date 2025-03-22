@@ -16,7 +16,7 @@ const cors = require('cors');
 
 
 const limiter = ratelimit({
-    windowsMS :10*60*1000, //10min
+    windowsMS :10*60, //1min
     max : 100
 });
 
