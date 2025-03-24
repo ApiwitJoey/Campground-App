@@ -7,24 +7,26 @@ const Log = require('../models/Log'); // Import Log model
 exports.getReserves = async (req, res, next) => {
     let query;
 
+    const populateOptions = [
+        {
+          path: 'campground',
+          select: 'name province telephone picture'
+        },
+        {
+          path: 'user',
+          select: 'name email role telephone'
+        }
+    ];
+
     if (req.user.role !== 'admin') {
-        query = Reserve.find({ user: req.user.id }).populate({
-            path: 'campground',
-            select: 'name province telephone picture'
-        });
+        query = Reserve.find({ user: req.user.id }).populate(populateOptions);
     } else { // If you are admin see all
         if (req.params.campgroundId) {
             console.log(req.params.campgroundId);
             query = Reserve.find({
                 campground: req.params.campgroundId
-            }).populate({
-                path: 'campground',
-                select: 'name province telephone picture'
-            });
-        } else query = Reserve.find().populate({
-            path: 'campground',
-            select: 'name province telephone picture'
-        });
+            }).populate(populateOptions);
+        } else query = Reserve.find().populate(populateOptions);
         
     }
 
@@ -45,11 +47,20 @@ exports.getReserves = async (req, res, next) => {
 //get single appointment
 //get api/v1/appointments/id
 exports.getReserve = async (req,res,next) => {
+
+    const populateOptions = [
+        {
+          path: 'campground',
+          select: 'name province telephone picture'
+        },
+        {
+          path: 'user',
+          select: 'name email role telephone'
+        }
+    ]
+    
     try {
-        const reserve = await Reserve.findById(req.params.id).populate({
-            path:'campground',
-            select : 'name province telephone picture'
-        });
+        const reserve = await Reserve.findById(req.params.id).populate(populateOptions);
 
         if (!reserve) {
             return res.status(404).json({success:false,message:`No reserve with the id of ${req.params.id}`});
