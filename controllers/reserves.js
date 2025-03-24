@@ -10,7 +10,7 @@ exports.getReserves = async (req, res, next) => {
     if (req.user.role !== 'admin') {
         query = Reserve.find({ user: req.user.id }).populate({
             path: 'campground',
-            select: 'name province telephone'
+            select: 'name province telephone picture'
         });
     } else { // If you are admin see all
         if (req.params.campgroundId) {
@@ -19,11 +19,11 @@ exports.getReserves = async (req, res, next) => {
                 campground: req.params.campgroundId
             }).populate({
                 path: 'campground',
-                select: 'name province telephone'
+                select: 'name province telephone picture'
             });
         } else query = Reserve.find().populate({
             path: 'campground',
-            select: 'name province telephone'
+            select: 'name province telephone picture'
         });
         
     }
@@ -48,7 +48,7 @@ exports.getReserve = async (req,res,next) => {
     try {
         const reserve = await Reserve.findById(req.params.id).populate({
             path:'campground',
-            select : 'name province tel'
+            select : 'name province telephone picture'
         });
 
         if (!reserve) {
